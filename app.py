@@ -77,12 +77,14 @@ if st.button("Predict Performance", type="primary"):
     st.write("---")
     st.header("Prediction Results")
 
-    # 2. Predict with KNN and SVM (they use the full pipeline)
-    knn_prediction = knn_model.predict(input_df)[0]
-    svm_prediction = svm_model.predict(input_df)[0]
-    
-    # 3. Predict with ANN (requires explicit preprocessing)
+    # 2. Pre-process the user's input using the saved preprocessor
+    # This converts strings like 'at_home' into the numerical format the models expect.
     input_processed = preprocessor.transform(input_df)
+
+    # 3. Make predictions with all three models using the PROCESSED data
+    knn_prediction = knn_model.predict(input_processed)[0]
+    svm_prediction = svm_model.predict(input_processed)[0]
+    
     ann_pred_prob = ann_model.predict(input_processed)
     ann_pred_index = np.argmax(ann_pred_prob, axis=1)[0]
     ann_prediction = label_encoder.inverse_transform([ann_pred_index])[0]
@@ -102,4 +104,5 @@ if st.button("Predict Performance", type="primary"):
         st.success(f"Predicted: **{ann_prediction}**")
 
 st.markdown("---")
+
 st.write("Developed by Low Jia Yuan, Abigail Chong Yung Ping, and Nathaniel Woo Shih Yan.")
